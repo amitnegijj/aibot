@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    #chat-container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 50px;
+    }
+    .user-message {
+      background-color: #d4edda;
+      text-align: right;
+    }
+    .response-message {
+      background-color: #cce5ff;
+    }
+    .message {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chat-container">
+  <div id="chat-messages"></div>
+  <div class="form-group">
+    <label for="messageInput">Type your message:</label>
+    <input type="text" class="form-control" id="messageInput" placeholder="Enter your message">
+  </div>
+  <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value;
+
+    // Append user message to the chat
+    appendMessage(message, 'user-message');
+
+    // Send the message to the '/api' route as a POST request
+    fetch('/api', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      body: message,
+    })
+    .then(response => response.text())
+    .then(data => {
+      // Append the response message to the chat
+      appendMessage(data, 'response-message');
+    })
+    .catch(error => {
+      console.error('Error sending message:', error);
+    });
+
+    // Clear the input field
+    messageInput.value = '';
+  }
+
+  function appendMessage(message, className) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.textContent = message;
+    messageDiv.className = `message ${className}`;
+    chatMessages.appendChild(messageDiv);
+  }
+</script>
+
+</body>
+</html>
